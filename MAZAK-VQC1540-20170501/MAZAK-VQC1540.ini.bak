@@ -1,0 +1,332 @@
+# PRIMARY INITIALIZATION PARAMETERS - MAZAK-VQC1540 mill
+# Author: Timothy Snowden / Solid Rock Development
+#         (modified from 5i25/7i77 configuration by PNCConf)
+# !!! DO NOT MODIFY WITH PNCCONF - FILE WILL BE RUINED !!!
+
+[EMC]
+MACHINE = MAZAK-VQC1540
+DEBUG = 0
+
+[DISPLAY]
+#DISPLAY = gmoccapy
+DISPLAY = axis
+PREFERENCE_FILE_PATH = MAZAK-VQC1540.pref
+POSITION_OFFSET = RELATIVE
+POSITION_FEEDBACK = ACTUAL
+MAX_FEED_OVERRIDE = 2.000000
+MAX_SPINDLE_OVERRIDE = 1.000000
+MIN_SPINDLE_OVERRIDE = 0.500000
+DEFAULT_SPINDLE_SPEED = 500
+INTRO_GRAPHIC = linuxcnc.gif
+INTRO_TIME = 5
+PROGRAM_PREFIX = ../nc-files
+INCREMENTS = 1in 0.5in 0.25in .1in .05in .01in .005in .001in .0005in .0001in
+POSITION_FEEDBACK = ACTUAL
+DEFAULT_LINEAR_VELOCITY = 1.666667
+MAX_LINEAR_VELOCITY = 11.666667
+MIN_LINEAR_VELOCITY = 0.010000
+DEFAULT_SPINDLE_SPEED = 500
+DEFAULT_ANGULAR_VELOCITY = 0.250000
+MAX_ANGULAR_VELOCITY = 1.000000
+MIN_ANGULAR_VELOCITY = 0.010000
+EDITOR = geany
+GEOMETRY = xyz
+
+#Custom Messages
+MESSAGE_BOLDTEXT = OVERHEAT
+MESSAGE_TEXT = Main transformer overheat
+MESSAGE_TYPE = okdialog
+MESSAGE_PINNAME = overheat-main-transf
+
+MESSAGE_BOLDTEXT = LUBE SYSTEM FAULT
+MESSAGE_TEXT = Head lube pressure alarm 1
+MESSAGE_TYPE = okdialog
+MESSAGE_PINNAME = lube-head-pressure-1
+
+MESSAGE_BOLDTEXT = LUBE SYSTEM FAULT
+MESSAGE_TEXT = Head lube pressure alarm 2
+MESSAGE_TYPE = okdialog
+MESSAGE_PINNAME = lube-head-pressure-2
+
+MESSAGE_BOLDTEXT = OVERHEAT
+MESSAGE_TEXT = Thermal trip alarm
+MESSAGE_TYPE = okdialog
+MESSAGE_PINNAME = overheat-thermal-trip
+
+MESSAGE_BOLDTEXT = SPINDLE ALARM
+MESSAGE_TEXT = Spindle controller abnormal
+MESSAGE_TYPE = okdialog
+MESSAGE_PINNAME = spindle-cntrlr-alarm
+
+MESSAGE_BOLDTEXT = MACHINE POWER
+MESSAGE_TEXT = Machine power fault
+MESSAGE_TYPE = okdialog
+MESSAGE_PINNAME = machine-power-fault
+
+MESSAGE_BOLDTEXT = LUBE SYSTEM FAULT
+MESSAGE_TEXT = Way lube fault
+MESSAGE_TYPE = okdialog
+MESSAGE_PINNAME = lube-waylube
+
+
+[FILTER]
+PROGRAM_EXTENSION = .png,.gif,.jpg Greyscale Depth Image
+PROGRAM_EXTENSION = .py Python Script
+png = image-to-gcode
+gif = image-to-gcode
+jpg = image-to-gcode
+py = python
+
+[TASK]
+TASK = milltask
+CYCLE_TIME = 0.010
+
+[PYTHON]
+TOPLEVEL = python/MAZAK-VQC1540.py
+PATH_APPEND = python
+
+[RS274NGC]
+# i.e. standards-compliant GCode, & changes thereto
+
+# Define startup modes:
+# - G17 = Plane XY
+# - G20 = Units in INCHES
+# - G40 = Cutter compensation OFF
+# - G49 = Cancel (clear out any) TOOL LENGTH compensation
+# - G64 = Path blending, P (tolerance) 0.001 inches
+# - G80 = Cancel (any) canned cycle motion
+# - G90 = ABSOLUTE distance mode
+# - G92 = Restore previous Coordinate System offset
+# - G94 = F-- = feed in UNITS/MINUTE (e.g. inches/minute)
+# - G97 = Spindle control in RPM
+# - G98 = In canned cycles, retract Z at least to pre-cycle Z position 
+#RS274NGC_STARTUP_CODE = G17 G20 G40 G49 G64 P0.001 G80 G90 G92 G94 G97 G98
+# Define features enabled (bitmask ... add option values together to set value):
+# - 4 = enable reading (only) of ini variables by: #<_ini[section]var_name>
+# - 8 = enable reading (only) of hal variables by: #<_hal[Hal item]>
+FEATURES = 4
+PARAMETER_FILE = MAZAK-VQC1540.var
+SUBROUTINE_PATH = macros
+# Remap M6 (toolchange) to customize toolchange action
+# Requirements:
+# 1) Create remap.py file in current config folder
+# 2) Add "from stdglue import *" (minus quotes) to remap.py
+# 3) Add [PYTHON]TOPLEVEL=<your-top-level.py> to .ini
+# 4) Add "import remap" (minus quotes) to your-top-level.py file
+# 5) Add [PYTHON]PATH_APPEND=<path-to-config-python-directory> to .ini
+#	 Suggestion: Create python folder in current config folder & use above
+# 6) Copy stdglue.py (from /usr/share/linuxcnc/ncfiles/remap_lib/python-stdglue/stdglue.py) to local python folder
+REMAP = M6 modalgroup=6 prolog=change_prolog ngc=atc epilog=change_epilog
+# Where:
+# - modalgroup=6 ... toolchange group
+# - prolog & epilog (python scripts before & after g-code) - use defaults for standard remaps
+# - ngc = custom g-code macro for toolchange
+
+[EMCMOT]
+EMCMOT = motmod
+COMM_TIMEOUT = 1.0
+COMM_WAIT = 0.010
+SERVO_PERIOD = 1000000
+NUM_DIO = 4
+NUM_AIO = 4
+
+[HOSTMOT2]
+# **** This is for info only ****
+# DRIVER0=hm2_eth
+# BOARD0=7i80
+# BOARD1=7i49
+# BOARD2=7i84(1)
+# BOARD3=7i84(2)
+# BOARD4=7i73
+
+[HAL]
+HALUI = halui
+HALFILE = MAZAK-VQC1540.hal
+HALFILE = spindle.hal
+HALFILE = atc.hal
+HALFILE = plc.hal
+POSTGUI_HALFILE = postgui_call_list.hal
+SHUTDOWN = shutdown.hal
+
+[HALUI]
+
+[TRAJ]
+AXES = 3
+COORDINATES = X Y Z
+LINEAR_UNITS = inch
+ANGULAR_UNITS = degree
+CYCLE_TIME = 0.010
+DEFAULT_VELOCITY = 0.333333
+MAX_VELOCITY = 11.666667
+POSITION_FILE = position.txt
+NO_FORCE_HOMING = 1
+
+[EMCIO]
+EMCIO = io
+CYCLE_TIME = 0.100
+TOOL_TABLE = tool.tbl
+
+#********************
+#********************
+# AXES
+#********************
+#********************
+[AXES]
+RESOLVER_EXC_FREQ = 2.5
+
+#********************
+# Axis X
+#********************
+[AXIS_0]
+TYPE = LINEAR
+FERROR = 2
+MIN_FERROR = 2
+MAX_VELOCITY = 11.666667
+MAX_ACCELERATION = 23.333333
+P = 20
+I = 0
+D = 0
+FF0 = 0
+FF1 = 0.361
+FF2 = 0.00035
+BIAS = 0
+DEADBAND = 0
+MAX_ERROR = 0
+MAX_OUTPUT = 0
+RESOLVER_SCALE = 0.07874016
+RESOLVER_VELOCITY_SCALE = 0.003333333
+RESOLVER_INDEX_DIVISOR = 5
+OUTPUT_SCALE = -10
+OUTPUT_MIN_LIMIT = -10
+OUTPUT_MAX_LIMIT = 10
+#MIN_LIMIT = -21.4
+#MAX_LIMIT = 0
+HOME = 0
+HOME_OFFSET = 0.04
+HOME_SEARCH_VEL = 1.666667
+HOME_LATCH_VEL = -0.016667
+HOME_FINAL_VEL = -1.666667
+HOME_USE_INDEX = NO
+HOME_IGNORE_LIMITS = YES
+
+#********************
+# Axis Y
+#********************
+[AXIS_1]
+TYPE = LINEAR
+FERROR = 2
+MIN_FERROR = 2
+MAX_VELOCITY = 11.666667
+MAX_ACCELERATION = 23.333333
+P = 20
+I = 0
+D = 0
+FF0 = 0
+FF1 = 0.358
+FF2 = 0.0007
+BIAS = 0
+DEADBAND = 0
+MAX_ERROR = 0
+MAX_OUTPUT = 10
+RESOLVER_SCALE = 0.07874016
+RESOLVER_VELOCITY_SCALE = 0.003333333
+RESOLVER_INDEX_DIVISOR = 5
+OUTPUT_SCALE = -10
+OUTPUT_MIN_LIMIT = -10
+OUTPUT_MAX_LIMIT = 10
+#MIN_LIMIT = -16.4
+#MAX_LIMIT = 0
+HOME = 0
+HOME_OFFSET = 0.04
+HOME_SEARCH_VEL = 1.666667
+HOME_LATCH_VEL = -0.016667
+HOME_FINAL_VEL = -1.666667
+HOME_USE_INDEX = NO
+HOME_IGNORE_LIMITS = YES
+
+#********************
+# Axis Z
+#********************
+[AXIS_2]
+TYPE = LINEAR
+FERROR = 2
+MIN_FERROR = 2
+MAX_VELOCITY = 9.166667
+MAX_ACCELERATION = 18.333334
+P = 32
+I = 0
+D = 0
+FF0 = 0
+FF1 = 0.369
+FF2 = 0.0005
+BIAS = 0
+DEADBAND = 0
+MAX_ERROR = 0
+MAX_OUTPUT = 10
+RESOLVER_SCALE = 0.07874016
+RESOLVER_VELOCITY_SCALE = 0.003333333
+RESOLVER_INDEX_DIVISOR = 5
+OUTPUT_SCALE = 10
+OUTPUT_MIN_LIMIT = -10
+OUTPUT_MAX_LIMIT = 10
+#MIN_LIMIT = -15
+#MAX_LIMIT = 0.0
+HOME = 0
+HOME_OFFSET = 0.04
+HOME_SEARCH_VEL = 1.666667
+HOME_LATCH_VEL = -0.016667
+HOME_FINAL_VEL = -1.666667
+HOME_USE_INDEX = NO
+HOME_IGNORE_LIMITS = YES
+
+#********************
+# Spindle 
+#********************
+[SPINDLE_9]
+P = 0
+I = 0
+D = 0
+FF0 = 1
+FF1 = 0
+FF2 = 0
+BIAS = 0
+DEADBAND = 0
+MAX_ERROR = 0
+MAX_OUTPUT = 0
+OUTPUT_SCALE = 8000
+
+
+#********************
+# TOOL CHANGE 
+#********************
+[ATC]
+#ALL ATC-RELATED POSITIONS IN **MACHINE COORDINATES (USE G53)!**
+X_ATC = 0		#X-axis in position to allow movement into ATC
+Y_ATC_MAG = 3		#Y-axis position to enter ATC magazine without engaging tool chain
+Y_ATC = 9.75		#Y-axis position to engage tool chain
+Y_SAFE = 1		#Y-axis position to be safely clear of ATC magazine
+Z_UP = 1		#Z-axis in highest position = max clearance / safety
+Z_ATC = -2.65		#Z-axis in position to clamp or unclamp tool in ATC
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

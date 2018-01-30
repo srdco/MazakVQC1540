@@ -1,0 +1,78 @@
+# AUTOMATIC TOOL CHANGER - MAZAK-VQC1540 mill
+# Author: Timothy Snowden / Solid Rock Development
+# Notes: All atc-related functions connected in this file
+
+#=============================
+# MODULES/FUNCTIONS
+#=============================
+#-------------------
+# LOAD MODULES
+#-------------------
+
+#-------------------
+# LOAD FUNCTIONS
+#-------------------
+# Every servo thread cycle:
+
+
+#=============================
+# SIGNALS
+#=============================
+
+#-------------------
+# INTERNAL SIGNALS
+#-------------------
+# INPUTS FROM PLC
+# PLC requests tool to engage ATC)
+net plc-atc-arrive-request 	motion.digital-in-00
+
+# PLC requests tool to leave ATC position
+net plc-atc-exit-request	motion.digital-in-01
+
+# PLC requests to complete the tool change
+net plc-atc-finished-request	motion.digital-in-02
+
+# PLC confirms that unload will be skipped
+net plc-skip-tool-unload	motion.digital-in-03
+
+
+# OUTPUTS TO PLC
+# Signals PLC that tool-change is in progress
+net tool-change			motion.digital-out-00
+
+# Signals PLC that tool is in ATC position
+net plc-atc-arrived		motion.digital-out-01
+
+# Signals PLC that the tool/spindle exited ATC position
+net plc-atc-exited		motion.digital-out-02
+
+# Signals PLC that ATC is in a load operation (vs unload)
+net plc-atc-tool-loading	motion.digital-out-03
+
+
+# IOCONTROL CONNECTIONS
+# Current tool number: 
+# needed only for PLC, handled internally in M6 Remap python/ngc code
+net tool-number			iocontrol.0.tool-number
+
+# Tool number requested by Tn:
+# needed only for PLC, handled internally in M6 Remap python/ngc code
+net tool-prep-number 		iocontrol.0.tool-prep-number
+
+# Automatically 'complete' tool-prepared signal. PLC & NGC handles necessary logic to skip unloading a tool
+net tool-prepare-loopback   	iocontrol.0.tool-prepare  =>  iocontrol.0.tool-prepared
+
+# Automatically 'complete' tool-change in IOCONTROL.
+# (IOCONTROL engages after the remap procedure is finished ... too late to be of help)
+net tool-change-loopback	iocontrol.0.tool-change	  =>  iocontrol.0.tool-changed
+
+# Command to initiate tool change:
+# internally handled by Remap of M6 (triggers change_prolog in stdglue)
+# but PLC needs a tool-change command (wired in plc.hal)
+#net tool-change 		<= iocontrol.0.tool-change
+
+# Confirmation that tool is changed:
+# Not needed. Handled internally by Remap of M6 
+# (set by change_epilog in stdglue calling emc_canon.CHANGE_TOOL)
+# PLC is informed of completion by NGC code using custom pin
+#net tool-changed

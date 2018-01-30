@@ -1,0 +1,5 @@
+Timothy Snowden Notes
+
+On LinuxCNC update/upgrade:
+- recopy stdglue.py to python/stdglue.py
+

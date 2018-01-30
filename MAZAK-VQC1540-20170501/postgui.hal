@@ -1,0 +1,23 @@
+# POSTGUI (GMOCCAPY) HAL - MAZAK-VQC1540 mill
+# Author: Timothy Snowden / Solid Rock Development
+# Notes: All connections to pins not available unto Gmoccapy GUI 
+#        is loaded are made here.
+
+#-------------------
+# GMOCCAPY SIGNALS
+#-------------------
+
+# Overtravel release (ignore limits)
+net ignore-limits 		<= gmoccapy.ignore-limits-active
+
+# Display tool offset after G43 (for tool-change / tool length offset)
+net tooloffset-z		gmoccapy.tooloffset-z	<= motion.tooloffset.z
+
+# Display warning messages
+net plc-main-txformer-overheat	=> gmoccapy.messages.overheat-main-transf
+net plc-head-lube-pressure-al	=> gmoccapy.messages.lube-head-pressure-1
+net plc-head-lube-pressure2-al	=> gmoccapy.messages.lube-head-pressure-2
+net plc-thermal-trip-alarm	=> gmoccapy.messages.overheat-thermal-trip
+net plc-spindle-controller-al	=> gmoccapy.messages.spindle-cntrlr-alarm
+net plc-machine-power-fault	=> gmoccapy.messages.machine-power-fault
+net plc-way-lube-fault		=> gmoccapy.messages.lube-waylube

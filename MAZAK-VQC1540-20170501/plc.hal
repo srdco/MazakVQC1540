@@ -1,0 +1,207 @@
+# PLC - MAZAK-VQC1540 mill
+# Author: Timothy Snowden / Solid Rock Development
+# Notes: All PLC connections are in this file, and
+#        these connections are then used in other files.
+#        Current implementation is via ClassicLadder but is intended
+#        to be replaceable by a physical PLC with minor adjustments.
+
+
+#=============================
+# MODULES/FUNCTIONS
+#=============================
+#-------------------
+# LOAD MODULES
+#-------------------
+# Load ClassicLadder real-time component
+loadrt classicladder_rt numPhysOutputs=60 numPhysInputs=60
+
+# Load ClassicLadder File (comment out --nogui to launch GUI on start)
+loadusr classicladder MAZAK-VQC1540.clp #--nogui
+# ClassicLadder PLC program for Mazak VQC 15/40
+# Author: Luke Snowden / Solid Rock Development
+
+#-------------------
+# LOAD FUNCTIONS
+#-------------------
+# Every servo thread cycle:
+
+# - read/write the ClassicLadder virtual pins
+addf classicladder.0.refresh	servo-thread
+
+
+#=============================
+# SIGNALS
+#=============================
+
+# Connections between the wiring pins and the PLC - names are self-explanatory
+# (format: explanatory-name		mesa-card-pin	<=?=>	plc-pin)
+
+#-------------------
+# EXTERNAL PLC INPUTS (machine ==> PLC)
+#-------------------
+# 7i84-A:
+net spindle-zero-speed			hm2_7i80.0.7i84.0.0.input-00	=> classicladder.0.in-24
+net spindle-controller-normal		hm2_7i80.0.7i84.0.0.input-01	=> classicladder.0.in-15
+net spindle-orient-arrival		hm2_7i80.0.7i84.0.0.input-02	=> classicladder.0.in-29
+net spindle-tool-detector		hm2_7i80.0.7i84.0.0.input-03	=> classicladder.0.in-28
+net tool-mag-in-position		hm2_7i80.0.7i84.0.0.input-16	=> classicladder.0.in-39
+net tool-mag-position-1			hm2_7i80.0.7i84.0.0.input-17	=> classicladder.0.in-41
+net tool-mag-position-2			hm2_7i80.0.7i84.0.0.input-18	=> classicladder.0.in-42
+net tool-mag-position-4			hm2_7i80.0.7i84.0.0.input-19	=> classicladder.0.in-43
+net tool-mag-position-8			hm2_7i80.0.7i84.0.0.input-20	=> classicladder.0.in-44
+net tool-mag-manual-rotate-pb		hm2_7i80.0.7i84.0.0.input-21	=> classicladder.0.in-40
+net tool-mag-cover-open			hm2_7i80.0.7i84.0.0.input-22	=> classicladder.0.in-30
+net tool-mag-cover-closed		hm2_7i80.0.7i84.0.0.input-23	=> classicladder.0.in-31
+net tool-measure-lower-switch		hm2_7i80.0.7i84.0.0.input-25	=> classicladder.0.in-45
+net tool-measure-upper-switch		hm2_7i80.0.7i84.0.0.input-26	=> classicladder.0.in-46
+net tool-measure-arm-extended		hm2_7i80.0.7i84.0.0.input-27	=> classicladder.0.in-23
+net tool-measure-arm-retracted		hm2_7i80.0.7i84.0.0.input-28	=> classicladder.0.in-22
+net tool-mag-tool-detector		hm2_7i80.0.7i84.0.0.input-29	=> classicladder.0.in-47
+net tool-unclamped			hm2_7i80.0.7i84.0.0.input-30	=> classicladder.0.in-36
+net tool-clamped			hm2_7i80.0.7i84.0.0.input-31	=> classicladder.0.in-37
+
+# 7i84-B:
+net machine-estop			hm2_7i80.0.7i84.0.1.input-28	=> classicladder.0.in-01
+net feed-hold-button                    hm2_7i80.0.7i84.0.1.input-27    => classicladder.0.in-10
+net machine-power-supply-on		hm2_7i80.0.7i84.0.1.input-00	=> classicladder.0.in-14
+net thermal-protector-tripped		hm2_7i80.0.7i84.0.1.input-01	=> classicladder.0.in-13
+net main-transformer-overheat		hm2_7i80.0.7i84.0.1.input-02	=> classicladder.0.in-02
+net head-lube-pressure-alarm		hm2_7i80.0.7i84.0.1.input-03	=> classicladder.0.in-11
+net head-lube-pressure-alarm2		hm2_7i80.0.7i84.0.1.input-04	=> classicladder.0.in-12
+net way-lube-alarm			hm2_7i80.0.7i84.0.1.input-05	=> classicladder.0.in-18
+net machine-door-interlock		hm2_7i80.0.7i84.0.1.input-08	=> classicladder.0.in-19
+net x-zero-point-ls			hm2_7i80.0.7i84.0.1.input-16	=> classicladder.0.in-03
+net y-zero-point-ls			hm2_7i80.0.7i84.0.1.input-17	=> classicladder.0.in-04
+net z-zero-point-ls			hm2_7i80.0.7i84.0.1.input-18	=> classicladder.0.in-05
+net y-mag-interfere-prs			hm2_7i80.0.7i84.0.1.input-21	=> classicladder.0.in-06
+net z-mag-interfere-prs			hm2_7i80.0.7i84.0.1.input-24	=> classicladder.0.in-07
+#net x-overtravel-return-decel		hm2_7i80.0.7i84.0.1.input-16	=> classicladder.0.in-??
+#net y-overtravel-return-decel		hm2_7i80.0.7i84.0.1.input-17	=> classicladder.0.in-??
+#net z-overtravel-return-decel		hm2_7i80.0.7i84.0.1.input-18	=> classicladder.0.in-??
+#net x-pos-limit-switch			hm2_7i80.0.7i84.0.1.input-19	=> classicladder.0.in-03
+#net x-neg-limit-switch			hm2_7i80.0.7i84.0.1.input-20	=> classicladder.0.in-04
+#net y-pos-limit-switch			hm2_7i80.0.7i84.0.1.input-21	=> classicladder.0.in-05
+#net y-neg-limit-switch			hm2_7i80.0.7i84.0.1.input-22	=> classicladder.0.in-06
+#net z-pos-limit-switch			hm2_7i80.0.7i84.0.1.input-23	=> classicladder.0.in-07
+#net z-neg-limit-switch			hm2_7i80.0.7i84.0.1.input-24	=> classicladder.0.in-08
+net servo-x-drive-alarm			hm2_7i80.0.7i84.0.1.input-29	=> classicladder.0.in-51
+net servo-y-drive-alarm			hm2_7i80.0.7i84.0.1.input-30	=> classicladder.0.in-52
+net servo-z-drive-alarm			hm2_7i80.0.7i84.0.1.input-31	=> classicladder.0.in-53
+
+
+#-------------------
+# EXTERNAL PLC OUTPUTS (PLC ==> machine)
+#-------------------
+# 7i84-A:
+# Enable spindle drive
+net spindle-set				hm2_7i80.0.7i84.0.0.output-00	<= classicladder.0.out-15 => hm2_7i80.0.pwmgen.03.enable
+# Spindle forward/reverse commands (requires spindle-run for spindle to activate)
+net spindle-reverse			hm2_7i80.0.7i84.0.0.output-01	<= classicladder.0.out-29
+net spindle-forward			hm2_7i80.0.7i84.0.0.output-02	<= classicladder.0.out-28
+# Spindle run command
+net spindle-run				hm2_7i80.0.7i84.0.0.output-03	<= classicladder.0.out-27
+net spindle-air-blast			hm2_7i80.0.7i84.0.0.output-04	<= classicladder.0.out-39
+net spindle-fan				hm2_7i80.0.7i84.0.0.output-05	<= classicladder.0.out-17
+net orient-command			hm2_7i80.0.7i84.0.0.output-09	<= classicladder.0.out-34
+net magazine-cw-reverse			hm2_7i80.0.7i84.0.0.output-10	<= classicladder.0.out-41
+net magazine-ccw-forward		hm2_7i80.0.7i84.0.0.output-11	<= classicladder.0.out-40
+net magazine-cover-close		hm2_7i80.0.7i84.0.0.output-12	<= classicladder.0.out-33
+net tool-change-release-limits		hm2_7i80.0.7i84.0.0.output-13	<= classicladder.0.out-26
+net tool-unclamp			hm2_7i80.0.7i84.0.0.output-14	<= classicladder.0.out-37
+net tool-measuring-arm-extend		hm2_7i80.0.7i84.0.0.output-15	<= classicladder.0.out-25
+
+# 7i84-B:
+#net servo-x-off			hm2_7i80.0.7i84.0.1.output-00	<= classicladder.0.out-42
+#net servo-y-off			hm2_7i80.0.7i84.0.1.output-01	<= classicladder.0.out-43
+#net servo-z-off			hm2_7i80.0.7i84.0.1.output-02	<= classicladder.0.out-44
+net servo-ready				hm2_7i80.0.7i84.0.1.output-03	<= classicladder.0.out-18
+net hydraulic-lube-pump-on		hm2_7i80.0.7i84.0.1.output-05	<= classicladder.0.out-16
+net flood-coolant-motor-on		hm2_7i80.0.7i84.0.1.output-06	<= classicladder.0.out-30
+net power-on				hm2_7i80.0.7i84.0.1.output-07	<= classicladder.0.out-00
+
+# Servo-on = power up XYZ axis servo drives through relay (for sinking output)
+# but do not enable drives / activate servo motors (linked to "ESTOP" button/circuit)
+net servo-on				hm2_7i80.0.7i84.0.1.output-08	<= classicladder.0.out-19
+
+# Servo-N-nc-ready = enable drives / activate servo motors (linked to "Machine On" button)
+# goes to 7i49 ENA pins as sinking outputs
+net servo-x-nc-ready			hm2_7i80.0.pwmgen.00.enable	<= classicladder.0.out-22
+net servo-y-nc-ready			hm2_7i80.0.pwmgen.01.enable	<= classicladder.0.out-23
+net servo-z-nc-ready			hm2_7i80.0.pwmgen.02.enable	<= classicladder.0.out-24
+
+net overtravel-release			hm2_7i80.0.7i84.0.1.output-14	<= classicladder.0.out-31
+#net inhibit-read-limit-switches	hm2_7i80.0.7i84.0.1.output-15	<= classicladder.0.out-45
+
+
+#-------------------
+# INTERNAL INPUTS (LinuxCNC <== PLC)
+#-------------------
+# PLC Alarm / Condition Outputs (connected in MAZAK-VQC1540.hal)
+# ESTOP signal generated by PLC (open on ESTOP)
+net plc-estop				<=	classicladder.0.out-01
+# Feed hold button > PLC > LinuxCNC.motion
+net feed-hold                           <=      classicladder.0.out-07
+net x-home				<=	classicladder.0.out-02
+net y-home				<=	classicladder.0.out-03
+net z-home				<=	classicladder.0.out-04
+net y-mag-interfere			<=	classicladder.0.out-05
+net z-mag-interfere			<=	classicladder.0.out-06
+net plc-servo-x-drive-alarm		<=	classicladder.0.out-49
+net plc-servo-y-drive-alarm		<=	classicladder.0.out-50
+net plc-servo-z-drive-alarm		<=	classicladder.0.out-51
+net plc-main-txformer-overheat		<=	classicladder.0.out-08
+net plc-head-lube-pressure-al		<=	classicladder.0.out-09
+net plc-head-lube-pressure2-al		<=	classicladder.0.out-10
+net plc-thermal-trip-alarm		<=	classicladder.0.out-11
+net plc-spindle-controller-al		<=	classicladder.0.out-12
+net plc-machine-power-fault		<=	classicladder.0.out-13
+net plc-way-lube-fault			<=	classicladder.0.out-14
+
+# Toolchange inputs (connected in atc.hal)
+net plc-atc-finished-request		<=	classicladder.0.out-32
+net plc-skip-tool-unload		<=	classicladder.0.out-35
+net plc-atc-arrive-request		<=	classicladder.0.out-36
+net plc-atc-exit-request		<=	classicladder.0.out-38
+
+#-------------------
+# INTERNAL OUTPUTS (LinuxCNC ==> PLC)
+#-------------------
+# Enable / power
+# PLC's 'machine power on' - drives TRUE once EMC-ENABLE-IN is active
+net estop-out				=>	classicladder.0.in-00
+net estop-reset				=>	classicladder.0.in-57
+
+# PLC's servo enable (servos & spindle) - linked to "MACHINE ON" / servo-N-nc-ready output
+net servo-x-enable			=>	classicladder.0.in-54
+net servo-y-enable			=>	classicladder.0.in-55
+net servo-z-enable			=>	classicladder.0.in-56
+net spindle-enable			=>	classicladder.0.in-21
+
+# Spindle
+net spindle-cw				=>	classicladder.0.in-16
+net spindle-ccw				=>	classicladder.0.in-17
+
+# Coolant
+net coolant-flood			=>	classicladder.0.in-25
+
+# Toolchange
+net plc-atc-arrived			=>	classicladder.0.in-32
+net plc-atc-exited			=>	classicladder.0.in-38
+net tool-change				=>	classicladder.0.in-26
+net plc-atc-tool-loading		=>	classicladder.0.in-33
+net tool-prep-number			=>	classicladder.0.s32in-02
+net tool-number				=>	classicladder.0.s32in-00
+
+# Manual tool changing
+net manual-tool-unclamp			=>	classicladder.0.in-34
+net manual-tool-clamp			=>	classicladder.0.in-35
+
+# Interlock override
+net door-interlock-override		=>	classicladder.0.in-20
+net ignore-limits			=>	classicladder.0.in-09
+
+# Homing (signal on when joint/axis is homing)
+net x-homing				=>	classicladder.0.in-48
+net y-homing				=>	classicladder.0.in-49
+net z-homing				=>	classicladder.0.in-50
+

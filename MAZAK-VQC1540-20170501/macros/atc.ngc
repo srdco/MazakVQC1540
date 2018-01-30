@@ -1,0 +1,176 @@
+o<atc> sub
+
+; AUTOMATIC TOOL CHANGER NGC SUBROUTINE FILE - MAZAK-VQC1540 mill
+; Author: Timothy Snowden / Solid Rock Development
+;         (inspired by Vismach toolchange.ngc by Andy Pugh)
+; Notes: 
+; - All atc-related functions connected in this file
+; - ALL MOVES PRECEDED BY G53 (move in machine coord's - NOT modal!)
+; - M66 (wait for digital input) - result stored in #5399, timeout = -1
+; - Standard param's exposed by change_prolog/eval'd by change_epilog:
+;    #<tool_in_spindle>
+;    #<selected_tool>
+;    #<current_pocket>
+;    #<selected_pocket>
+
+; DEFINE DIGITAL INPUTS:
+; P0 = atc-arrive-request (move tool into ATC, but don't engage chain)
+; P1 = atc-exit-request (PLC request to exit toolchanger magazine)
+; P2 = atc-finished-request (PLC request to complete the tool change)
+; P3 = skip-unload (PLC confirms that unload will be skipped)
+
+; DEFINE DIGITAL OUTPUTS:
+; P0 = tool-change (signals PLC that a tool change is in progress)
+; P1 = atc-arrived (signals PLC that tool is in ATC 'wait' position)
+; P2 = atc-exited (signals PLC that the tool/spindle exited the ATC)
+; P3 = atc-tool-loading (signals PLC that ATC is in loading operation)
+
+; DEFINE VARIABLES:
+#<x-atc> = #<_ini[ATC]X_ATC>  ; X in line with the ATC
+#<y-atc-mag> = #<_ini[ATC]Y_ATC_MAG>  ; Y in the magazine, but not in the tool chain
+#<y-atc> = #<_ini[ATC]Y_ATC>  ; Y position to engage the tool chain
+#<y-safe> = #<_ini[ATC]Y_SAFE>; Y safely outside the magazine
+#<z-up> = #<_ini[ATC]Z_UP>  ; Z all the way up - highest clearance / safety
+#<z-atc> = #<_ini[ATC]Z_ATC>  ; Z at level of ATC tool chain)
+
+	; ==== BEGINNING CHECKS & PREP LOGIC ====
+	; Ensure all outputs are turned off (none remaining on from last toolchange if, e.g., interrupted)
+	M65 P0  ; tool-change
+	M65 P1  ; atc-arrived
+	M65 P2  ; atc-exited
+	M65 P3  ; atc-tool-loading
+
+	
+; Skip tool change if same tool is requested
+; Check if the current tool matches the new tool
+
+O10 IF [#<tool_in_spindle> NE #<selected_tool>]
+	M70  ; save current modal state
+	M5  ; ensure spindle is stopped
+	M64 P0  ; notify PLC of toolchange - Turn ON 'tool-change'
+	#5399 = 2  ; set #5399 to a bogus value to avoid accidents
+
+	G61  ; turn path blending off to ensure precise entry/exit of ATC
+	G28.1  ; save current position to #5161-5166
+
+	; Update the tool number if a tool was in the spindle before startup
+;	O20 IF [#5000 GT 0 AND #<tool_in_spindle> EQ 0]
+;		M61 Q#5000
+;		(ABORT, INFO: TOOL UPDATED TO STORED TOOL NUMBER)
+;	O20 ENDIF
+
+	G53 G0 Z #<z-up>  ; move to up position
+	G53 X #<x-atc>  ; move in line to enter ATC
+
+	M66 P0 L3 Q60  ; wait up to 30s for PLC atc-arrive-request to go HIGH
+	; Abort if wait times out
+	O30 IF [#5399 LT 0]
+		(ABORT, ERROR: Failed to open cover, ready empty pocket assigned to current tool, and/or orient spindle [Debug Info: atc-arrive-request did not activate])
+	O30 ENDIF
+
+	G53 G0 Y #<y-atc-mag>  ; move into magazine area (but not into chain) ---while Z is at safe height---
+
+	M66 P3 L0  ; check if PLC is skipping unload
+
+	; ==== UNLOADING TOOL LOGIC ====
+	; Only unload if there is a tool in the spindle
+	; Test if current tool no > 0 & that PLC agrees to unload
+	O40 IF [#<tool_in_spindle> GT 0 AND #5399 EQ 0]
+		G53 Z #<z-atc>  ; drop to tool-change position
+		G53 Y #<y-atc>  ; move Y into tool chain
+		M64 P1 ; notify PLC - set 'atc-arrived' ON
+
+		M66 P1 L3 Q5  ; wait 5s for PLC atc-exit-request to go HIGH (i.e. lift after unclamp)
+		M65 P1  ; turn 'atc-arrived' OFF
+		; Abort if wait times out
+		O41 IF [#5399 LT 0] 
+			M65 P0 ; notify PLC tool-change is cancelled - set 'tool-change' OFF
+			(ABORT, ERROR: Failed to unclamp current tool. [Debug Info: atc-exit-request did not activate])
+		O41 ENDIF
+
+		G53 G0 Z #<z-up>  ; lift z to allow tool-chain to move
+
+		M64 P2  ; notify PLC - set 'atc-exited' ON
+
+	; Else, if no tool is in the spindle, simply load the new tool
+	; Test if current tool no = 0 & PLC agrees to skip unload
+	O40 ELSEIF [#<tool_in_spindle> EQ 0 AND #5399 EQ 1]
+		G53 Y #<y-atc>  ; move Y over tool chain
+
+		M64 P1  ; notify PLC - set 'atc-arrived' ON
+
+	; Else, there's a problem!
+	O40 ELSEIF [#5399 LT 1]
+		M65 P0  ; notify PLC tool-change is cancelled - set 'tool-change' OFF
+		(ABORT, ERROR: Disagreement between PLC and atc.ngc on skipping unload [Debug Info: skip-tool-unload opposite of expected by atc.ngc])
+
+	O40 ENDIF
+
+	; ==== LOADING TOOL LOGIC ====
+	; Only load tool if new tool is not 0
+	O50 IF [#<selected_tool> GT 0]
+		M65 P1  ; turn 'atc-arrived' off so it doesn't accidentally activate next step
+		M64 P3  ; turn 'atc-tool-loading' ON so PLC knows to clamp/unclamp, etc 
+		M66 P0 L3 Q30  ; wait up to 30s for PLC atc-arrive-request to go HIGH (pocket rdy, move down)
+		; Abort if wait times out
+		O51 IF [#5399 LT 0]
+			M65 P0  ; notify PLC tool-change is cancelled - set 'tool-change' OFF
+			M65 P2  ; notify PLC - set 'atc-exited' OFF
+			(ABORT, ERROR: Failed to move new tool into position. [Debug Info: atc-arrive-request did not activate])
+		O51 ENDIF
+		
+		M65 P2  ; notify PLC - set 'atc-exited' OFF
+
+		G53 G0 Z #<z-atc>  ; drop Z to pick up new tool
+
+		M64 P1  ; notify PLC - set 'atc-arrived' ON
+
+		M66 P1 L3 Q5  ; wait 5s for PLC atc-exit-request to go HIGH (clamped)
+		M65 P1  ; turn 'atc-arrived' off
+		; Abort if wait times out
+		O52 IF [#5399 LT 0]
+			M65 P0  ; notify PLC tool-change is cancelled - set 'tool-change' OFF
+			(ABORT, ERROR: Failed to clamp new tool [Debug Info: atc-exit-request did not activate])
+		O52 ENDIF
+
+	; Else, if a negative tool number is requested, we have a problem!
+	O50 ELSEIF [#<selected_tool> LT 0]
+		M65 P1  ; turn 'atc-arrived' OFF if it happens to be on
+		M65 P0  ; turn 'tool-change OFF
+		(ABORT, ERROR: Cannot load a negative tool number)
+
+	O50 ENDIF
+	
+	; ==== LEAVING MAGAZINE & FINISHING TOOLCHANGE LOGIC ==== 
+
+	G53 G0 Y #<y-safe>  ; move tool/spindle safely out of magazine
+	G53 G0 Z0  ; move tool/spindle to safe height (or ensure it is already there)
+
+	M65 P3  ; notify PLC - atc-tool-loading (done loading tool)
+	M64 P2  ; notify PLC - atc-exited (tool safely out of mag)
+	#5000 = #<selected_tool>  ; update persistent tool number
+
+	M66 P2 L3 Q5  ; wait 5s for PLC atc-finished-request to go HI (done!)
+	M65 P2  ; turn 'atc-exited' off
+	; M65 P3  ; turn 'atc-close' off
+
+	; Abort if wait times out
+	O60 IF [#5399 LT 0]
+		M65 P0  ; notify PLC tool-change is cancelled - set 'tool-change' OFF
+		(ABORT, ERROR: failed to clamp tool and/or finish tool-change [Debug Info: atc-finished-request did not activate])
+	O60 ENDIF
+
+	G53 G0 X #5161 Y #5162  ; move back to pre-toolchange X/Y position
+
+	G43 H0  ; set tool offsets to current tool in spindle ... or to 0 if no tool
+	M72  ; restore current state
+
+	M65 P0  ; notify PLC tool-change is over - set 'tool-change' OFF
+
+        ; G4 P0.5  ; pause for all i/o to catch up
+
+O10 ENDIF
+o<atc> endsub [1]
+
+(MSG, Done)
+M2

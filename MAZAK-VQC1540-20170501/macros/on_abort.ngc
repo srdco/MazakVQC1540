@@ -1,0 +1,23 @@
+o<on_abort> sub
+
+; ABORT HANDLING - MAZAK-VQC1540 mill
+; Author: Timothy Snowden / Solid Rock Development
+;         (from LCNC manual example)
+
+; (MSG, Aborted. Restoring previous state.)
+M65 P0 (turn toolchange outputs off)
+M65 P1
+M65 P2
+M65 P3
+G54 (restore offets)
+G17 (XY plane)
+G90 (absolute)
+G94 (feed in units/min)
+M48 (set feed/speed overrides)
+G40 (cutter comp off)
+M5 (spindle off)
+G80 (cancel modal motion)
+M9 (coolant off)
+
+o<on_abort> endsub
+M2
