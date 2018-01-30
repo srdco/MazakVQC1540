@@ -1,5 +1,11 @@
 # MazakVQC1540
 
+***USE ALL FILES, SUGGESTIONS, ETC AT YOUR OWN RISK, AND INDEPENDENTLY VERIFY EVERYTHING***
+***YOU ALONE ARE RESPONSIBLE FOR ENSURING ACCURACY & SAFETY OF YOURSELF, YOUR MACHINE, AND ALL INVOLVED***
+***THESE NOTES, FILES, ETC ARE OFFERED SOLELY AS AN ASSISTANCE, ARE NOT ENTIRELY ACCURATE, ARE NOT INTENDED TO BE IMPLEMENTED AS PRESENTED WITHOUT CORRECTION & MODIFICATION, AND CARRY NO WARRANTY OR GUARANTEE OF ANY KIND!***
+
+***YOU HAVE BEEN WARNED!***
+
 GENERAL NOTES
 1. Go to Mitsubishi Automation's website, create a free login and search for TRA-30 (and TRA), the Meldas controller, & the FREQROL spindle controller - the manuals are all free for download for your own use (which is why I can't send them to you). They are LONG, and *somewhat* text-searchable, but invaluable if you spend time poring over them.
 
