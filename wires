@@ -1,0 +1,339 @@
+CND1
+Signal				Line #	Conn.		Pin	IO board	IO Pin	HAL Pin		Notes
+Spindle Zero Speed		143	CN3-4		1	7i84.0.0	TB3-1	input-00
+Spindle Controller Normal	FA	CON1-11		2	7i84.0.0	TB3-2	input-01
+Emergency Stop			*ESP	CN3-1		3	7i84.0.1	TB2-13	input-28
+Magazine Inposition		213	TB41-213	4	7i84.0.0	TB2-1	input-16	Magazine in position
+Pallet Select No. 1 LS		PS1LS	TB7-287		5
+Magazine Pos 2			222	TB41-222	6	7i84.0.0	TB2-3	input-18	Bit 1 of the Tool Magazine Address
+Tool Detector 			147	CN3-39		7
+Tool Measure Arm Retracted	343	TB41-343	8	7i84.0.0	TB2-13	input-28	Reads +24V when the tool length measurement arm is fully retracted.
+Pallet Cycle No. 1 PB		PCY1PB	TB7-851		9
+Manual Machine Rotate PB	150	TB41-150	10	7i84.0.0	TB2-6	input-21	Reads +24V when the Magazine Manual Jog button is pressed.
+Pallet Clamp PRS		PCLPRS	TB7-298		11
+Pallet Unclamp PRS		PUCPRS	TB7-299		12
+Ext Finish Signal		EXFIN	TB6-EXFIN	13
+Pallet Select No. 2 LS		PS2LS	TB7-288		14
+DC 24V -Com			OG	TB41-OG		15
+X-Axis Zero Return Decel	DecX	TB41-DECX	16
+Y-Axis Zero Return Decel	DecY	TB41-DECY	17
+Z-Axis Zero Return Decel	DECZ	TB51-DECZ	18
+Magazine Pos 4			223	TB41-223	19	7i84.0.0	TB2-4	input-19	Bit 2 of the Tool Magazine Address
+Magazine Pos 8			224	TB41-224	20	7i84.0.0	TB2-5	input-20	Bit 3 of the Tool Magazine Address
+Magazine Pos 16			225			21	7i84.0.0	TB2-9	input-24	Bit 4 of the Tool Magazine Address
+							22
+Tool Unclamp Key Switch		TUCSS	TB4-149		23
+Tool Clamp			209	TB51-209	24
+Ext Reset			EXRST	TB6-EXRST	25
+Pallet Cycle No. 2 PB		PCY2PB	TB7-852		26
+Spindle Orient Arrival		ORA1	CON1-22		27	7i84.0.0	TB3-3	input-02
+Pallet Lock Pin Retract		PLPR	TB7-2063	28
+							29
+							30
+							31
+							32
+DC 24V +Com			+24V	TB41-+24V	33
+Pallet Door Close RS		PDCRS	TB7-296		34
+Pallet Door Open RS		PDORS	TB7-297		35
+Pallet Load PRS			PLPRS	TB7-283		36
+Machine Door Interlock		151	TB1-151		37
+Input Spare 3			ISP3			38
+Tool Unclamp			208	TB51-208	39
+Magazine Pos 1			221	TB41-221	40	7i84.0.0	TB2-2	input-17	Bit 0 of the Tool Magazine Address
+Tool Measure Arm Extended	342	TB41-342	41	7i84.0.0	TB2-12	input-27	Reads +24V when the tool length measurement arm is fully extended.
+Pallet Unload PRS		PULPRS	TB7-299		42
+Pallet On Stocker No. 1 PRS	PON1PRS	TB7-292		43
+Pallet On Stocker No. 2 PRS	PON2PRS	TB7-293		44
++X Overtravel			+LX			45	7i84.0.1	TB3-4	input-03
+							46
++Y 2nd Overtravel		+LY	CN3-37		47	7i84.0.1	TB2-6	input-21
+-Y Overtravel			-LY			48	7i84.0.1	TB2-7	input-22
+							49
+-Z 2nd Over Travel		-LZ	CN3-38		50
+
+CND2
+Signal				Line #		Conn.		Pin	IO Board	IO Pin	HAL Pin		Notes
+X Axis Interlock		INTX		TB6-INTX	1
+Z Axis Interlock		INTZ		TB6-INTZ	2
+4 Axis Interlock		INT4		TB6-INT4	3
+Ext. Cycle Start		ECST		TB6-ECST	4
+Ext. Feed Hold			EFHD		TB1-EFHD	5
+Ext. Single Block		ESBK		TB6-ESBK	6
+Enable Pallet Change		ENPC		TB7-861		7
+Pallet Select No. 1 PB		PS1PB		TB7-854		8
+Input Spare 19			ISP19		TB6-ISP19	9
+Inhibit Read LS			INHRLS		TB1-INHRLS	10
+Pallet Select No. 2 PB		PS2PB		TB7-853		11
+Pallet Door Open SS		PDOSS		TB7-860		12
+Tool Length Measure Decel	238		TB41-238	13	7i84.0.0	TB2-11	input-26	Reads +24V when the tool length measurement upper sensor is tripped.
+Tool Measure Skip		239		TB41-239	14	7i84.0.0	TB2-10	input-25	Reads +24V when the tool length measurement lower sensor is tripped.
+Auto Mod Z			AUTM		TB6-AUTM	15
+								16
+Feed Hold PB			FHDPB		TB6-FHDPB	17
+DC 24V -COM			OG		TB1-OG		18
+Y Axis Interlock		INTY		TB6-INTY	19
+								20
+								21
+Enable Coolant			ENCOL		TB6-ENCOL	22
+Torque Limiter			OSP19		CN301A-10	23
+PATO Light			CYFIN		CN301A-1	24
+Machine Malfunction		MMAL		CN301A-19	25
+Machine Ready			MRDY		TB6-MRDY	26
+Air Jet				761		CN13-10		27
+				M44T		CN301A-2	28
+MMS Start Command		MMS STCMD	CN200-14	29
+				M45T		CN301A-4	30
+Cycle Start LED			CSTL		TB6-CSTL	31
+								32
+DC 24V +Com			ZS2		CON1-4		33
+Ext. Miss Operation 1		EMOP1		TB6-EMOP1	34
+On Line				ONLN		TB6-ONLN	35
+External Alarm			EXAL 		TB6-EXAL	36
+Recessing Tool LS		RCTLS		TB1-RCTLS	37
+								38
+Pallet Clamp SS			PCLSS		TB7-855		39
+Pallet Unclamp SS		PUCSS		TB7-856		40
+Reset Out			RST		TB1-RST		41
+Servo Ready			SA		CN301A-7	42	7i84.0.1	TB2-11	input-26	Reads +24V when FIXME the servos are ready??  Servo amps are on??
+Tool Change Memory		TCME		CN301A-33	43
+				M43T		CN301A-3	44
+Tool Measuring Arm Extend	762		CN13-9		45	7i84.0.0	TB2-24	output-15	Drive to +24V to extend the tool length probe.  Drive to 0V to retract the arm.
+Pallet Clamp Command		PCLCD		TB6-PCLCD	46
+Pallet Unclamp Command		PUCCD		TB6-PUCCD	47
+No Spare Tool			NSPT		CN301A-34	48
+Cycle Start PB			CSTPB		TB6-CSTPB	49
+								50
+
+CND3
+Signal						Line #	Conn.		Pin	IO Board	IO Pin	HAL Pin		Notes
+Spindle Air Blast				715	CN13-6		1	7i84.0.0	TB3-21	output-04	Drive to +24 to open the solenoid valve to let compressed air out by the spindle?
+DC 24V -Com					OG	CN301A-41	2
+DC 24V -Com					OG	CN301A-42	3
+DC 24V -Com					OG	CN301A-43	4
+Pallet Select No. 1				P1S	TB7-787A	5
+DC 24V -Com					OG	CN301A-44	6
+Pallet Air Blast				PAB	TB7-724		7
+Flood Coolant Motor Starter			836	CN13-15		8
+SSR Spare 3					SSP3	CN13-13		9
+Oil Hole					736	CN13-12		10
+Mist Coolant					717	CN13-8		11
+Work Air Blast					716	CN13-7		12
+Spindle Reverse					SRV	CN301A-28	13	7i84.0.0	TB3-18	output-01	Drive to +24 to select Spindle Reverse (CCW) next time Spindle Run goes on.
+Spindle Forward					SFR	CN301A-27	14	7i84.0.0	TB3-19	output-02	Drive to +24 to select Spindle Forward (CW) next time Spindle Run goes on.
+Pallet Load					PLD	TB7-782A	15
+Spindle Motor Cooling Air Blow			754	CN13-4		16	7i84.0.0	TB3-22	output-05	Drive to +24 to turn on the spindle cooling fan.  FIXME: on Petter's machine this is something else
+Power On					PW1	CN301A-20	17
+DC 24V -Com					OG	CN301A-46	18
+Pallet Door Close				PDC	TB7-725B	19
+									20
+Zero Pos X Axis					ZPX	TB6-ZPX		21
+Zero Pos Y Axis					ZPY	TB6-ZPY		22
+Zero Pos Z Axis					ZPZ	TB6-ZPZ		23
+Zero Pos 4 Axis					ZP4	TB6-ZP4		24
+Magazine CW (Rev)				708B	CN13-1		25	7i84.0.0	TB2-19	output-10	Drive to +24 to move the magazine one step in the reverse/CW direction. (doesn't work)
+Pallet Lock Pin					PLP	TB7-1571	26
+Pallet Door Open				PDO	TB7-725A	27
+Magazine Run (CN11 SSR board connector)		7574	CN11-5		28	7i84.0.0	TB2-17	output-08	Drive to +24 to allow the magazine to move.
+Pallet Unload					PUD	TB7-782B	29
+Spindle Run					SMR	CN301A-29	30	7i84.0.0	TB3-20	output-03	Drive to +24 to turn on spindle (drive Spindle Fwd or Spindle Rev first to pick direction).
+Magazine CCW (Forward)				708A	CN13-2		31	7i84.0.0	TB2-20	output-11	Drive to +24 to move the magazine one step in the forward/CCW direction. (works)
+Over Travel Release				OTR	CN301A-11	32
+Pallet Select No. 2 				P2S	TB7-787B	33
+Work Light					WL	CN301A-8	34
+Pallet Cycle No. 1 LED				PCY1	TB6-PCY1	35
+M Function					MF	TB6-MF		36
+Pallet Stocker Lock Pin				PSLP	TB7-1572	37
+									38
+									39
+									40
+Pallet Cycle No. 2 LED				PCY2	TB7-PCY2	41
+Pallet Clamp					PCL	TB7-722A	42
+Spindle Set					SSET	CN301A-9	43	7i84.0.0	TB3-17	output-00	turn on spindle drive?
+Dust Inhale Eliminate				735	CN13-11		44
+Orient Command					ORCM1	CN301A-30	45
+Output Spare 11					OSP11	CN301A-18	46
+Pallet Unclamp					PUC	TB6-722B	47
+Hydraulic / Head Lube Pump Motor Starter	835	CN13-16		48	7i84.0.0	TB3-22	output-05	Drive to +24 to turn on the Hydraulic Pump and the Head Lube Pump.
+Tool Unclamp					710	CN13-3		49
+Magazine Cover Close				727	CN13-14		50	7i84.0.0	TB2-21	output-12	Drive to +24 to close the door between the tool magazine and the workspace.
+
+CND4
+Signal				Line #	Conn.		Pin	IO Board	IO Pin	HAL Pin
+DC 24V -Com			OG	TB51-OG		1
+Pallet No. 1 On			P1ON	TB6-P1ON	2
+Head Lube Pressure Alarm #2	CH24	TB1-CH24	3
+Input Spare 24			ISP24			4
+							5
+							6
+							7
+							8
+							9
+							10
+							11
+							12
+							13
+Magazine Cover Open		218	TB41-218	14	7i84.0.0	TB2-7	input-22	+24 when door between workspace and tool magazine is fully open, 0V when not fully open.
+Magazine Cover Close		219	TB41-219	15	7i84.0.0	TB2-8	input-23	+24 when door between workspace and tool magazine is fully closed, 0V when not fully closed.
+Pallet Lock Pin Extend		PLPE	TB7-2064	16
+Pallet Stocker Lock Pin Retract	PSLPR	TB7-2065	17
+Index Table 4 Axis Unclamp	152	TB1-152		18
+							19
+Pallet Stocker Lock Pin Extend	PSLPE	TB7-2066	20
+Pallet Door Close SS		PDCSS	TB7-859		21
+							22
+							23
+							24
+							25
+Spindle Tool Detector 		382	TB51-382	26	7i84.0.0	TB3-4	input-03
+Sensor Poweron			MMS PON	CN200S-5	27
+MMS Ready			MMS RDY	CN200-1		28
+Sensory Ready			SEN RDY	CN200-2		29
+Sensor Start			MMS ST	CN200S-4	30
+							31
+							32
+DC 24V +Com			+24V	TB1-+24V	33
+Pallet Load SS			PLSS	TB7-857		34
+Pallet Unload SS		PULSS	TB7-858		35
+Pallet No. 2 On			P2On	TB6-P2ON	36
+							37
+							38
+							39
+							40
+							41
+							42
+							43
+4 Axis Zero Return Decel	DEC4	TB1-DEC4	44
+							45
+Thermal Trip Protector		144	TB4-144		46
+Machine Power Supply		351	TB41-351	47
+Head Lube Pressure Alarm	141	CN3-2		48
+Waylube Alarm			WLAL	CN3-35		49
+Main Transformer Over Heat	146	TB4-146		50
+
+CND5
+Signal							Pin	Mesa Board	IO Pin
+Spindle Analog Control					4	7i49		TB4-24
+Spindle Analog Control Ground				5	7i49		TB4-23
+
+CAM1
+Signal				Line #	Conn.		Pin	IO Board	IO Pin	HAL Pin		Notes
+Analog Servo CMD 1 (+10 to -10)	ER1			1	7i49		P4-20			AOUT0
+Analog Servo CMD 1 Ground	ERR1			2						Connect to 0G ground
+							3
+							4
+				SC1			5
+NC Ready 1			READY1			6	7i84.0.1	TB2-17	output-08	Weakly pulled up to 24V, pull to ground to enable servo amp.  FIXME: 7i84 output is too weak to pull down
+Servo On 1			SVON1			7	7i84.0.0	TB3-5	input-04	The TRS-50B drives this to +24V when the servo amp is ready
+				ALM1			8
+				RG			9						Connect to 0G ground
+							10
+							11
+							12
+							13
+							14
+							15
+NC Ready 2						16	7i84.0.1	TB2-19	output-10
+Servo On 2						17	7i84.0.0	TB3-6	input-05
+							18
+							19
+							20
+				AG			21						Connect to 0G ground
+							22
+							23
+							24
+							25
+							26
+				+24V			27						Connect to 24V power rail
+							28
+							29
+							30
+							31
+							32
+							33
+							34
+							35
+							36
+							37
+NC Ready 3						38	7i84.0.1	TB2-21	output-12
+Servo On 3						39	7i84.0.0	TB3-7	input-06
+							40
+							41
+							42
+							43
+							44
+							45
+							46
+							47
+							48
+							49
+							50
+
+CNA3 (X)
+Signal		Line #	Pin	Board	Pin	Notes
+Ground		0G	1			Connect to 0G
+-12V			2			Connect to -12V (blue) on the ATX power supply
+			3
+			4
+			5
++12V			6			Connect to +12V (yellow) on the ATX power supply
+Ground		0G	7			Connect to 0G
+			8
+			9
+			10
+			11
+RS1			12	7i49	P4-2	SIN0+
+RS2			13	7i49	P4-1	SIN0-
+RC1			14	7i49	P4-4	COS0+
+RC2			15	7i49	P4-3	COS0-
+RO1			16	7i49	P4-7	DRV0+
+RO2			17	7i49	P4-6	DRV0-
+TG1			18			Tach output, unused
+TG2			19			Tach output, unused
+			20
+
+CNA4 (Y)
+Signal		Line #	Pin	Board	Pin	Notes
+Ground		0G	1			Connect to 0G
+-12V			2			Connect to -12V (blue) on the ATX power supply
+			3
+			4
+			5
++12V			6			Connect to +12V (yellow) on the ATX power supply
+Ground		0G	7			Connect to 0G
+			8
+			9
+			10
+			11
+RS1			12	7i49	P4-10	SIN1+
+RS2			13	7i49	P4-9	SIN1-
+RC1			14	7i49	P4-12	COS1+
+RC2			15	7i49	P4-11	COS1-
+RO1			16	7i49	P4-15	DRV1+
+RO2			17	7i49	P4-14	DRV1-
+TG1			18			Tach output, unused
+TG2			19			Tach output, unused
+			20
+
+CNA5 (Z)
+Signal		Line #	Pin	Board	Pin	Notes
+Ground		0G	1			Connect to 0G
+-12V			2			Connect to -12V (blue) on the ATX power supply
+			3
+			4
+			5
++12V			6			Connect to +12V (yellow) on the ATX power supply
+Ground		0G	7			Connect to 0G
+			8
+			9
+			10
+			11
+RS1			12	7i49	P3-2	SIN2+
+RS2			13	7i49	P3-1	SIN2-
+RC1			14	7i49	P3-4	COS2+
+RC2			15	7i49	P3-3	COS2-
+RO1			16	7i49	P3-7	DRV2+
+RO2			17	7i49	P3-6	DRV2-
+TG1			18			Tach output, unused
+TG2			19			Tach output, unused
+			20
+
