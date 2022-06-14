@@ -45,8 +45,8 @@ net spindle-controller-normal		hm2_7i80.0.7i84.0.0.input-01	=> classicladder.0.i
 net spindle-orient-arrival		hm2_7i80.0.7i84.0.0.input-02	=> classicladder.0.in-29
 net spindle-tool-detector		hm2_7i80.0.7i84.0.0.input-03	=> classicladder.0.in-28
 
-net magazine-cover-open			hm2_7i80.0.7i84.0.0.input-06
-net magazine-cover-closed		hm2_7i80.0.7i84.0.0.input-07
+#net magazine-cover-open			hm2_7i80.0.7i84.0.0.input-06
+#net magazine-cover-closed		hm2_7i80.0.7i84.0.0.input-07
 
 net tool-mag-in-position		hm2_7i80.0.7i84.0.0.input-16	=> classicladder.0.in-39
 net tool-mag-position-1			hm2_7i80.0.7i84.0.0.input-17	=> classicladder.0.in-41
@@ -142,11 +142,13 @@ net power-on				hm2_7i80.0.7i84.0.1.output-07	#<= classicladder.0.out-00
 # Servo-on = power up XYZ axis servo drives through relay (for sinking output)
 # but do not enable drives / activate servo motors (linked to "ESTOP" button/circuit)
 net nc-ready-1			hm2_7i80.0.7i84.0.1.output-08	#<= classicladder.0.out-19
-net servo1-on			hm2_7i80.0.7i84.0.1.output-09	#<= classicladder.0.out-19
+net servo1-on			hm2_7i80.0.7i84.0.0.input-04	#<= classicladder.0.out-19
+
 net nc-ready-2			hm2_7i80.0.7i84.0.1.output-10	#<= classicladder.0.out-19
-net servo2-on			hm2_7i80.0.7i84.0.1.output-11	#<= classicladder.0.out-19
+net servo2-on			hm2_7i80.0.7i84.0.0.input-05	#<= classicladder.0.out-19
+
 net nc-ready-3			hm2_7i80.0.7i84.0.1.output-12	#<= classicladder.0.out-19
-net servo3-on			hm2_7i80.0.7i84.0.1.output-13	#<= classicladder.0.out-19
+net servo3-on			hm2_7i80.0.7i84.0.0.input-06	#<= classicladder.0.out-19
 
 # Servo-N-nc-ready = enable drives / activate servo motors (linked to "Machine On" button)
 # goes to 7i49 ENA pins as sinking outputs
