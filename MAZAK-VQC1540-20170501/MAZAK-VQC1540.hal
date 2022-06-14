@@ -121,7 +121,7 @@ setp hm2_7i80.0.resolver.excitation-khz [AXES]RESOLVER_EXC_FREQ
 # AXIS-X
 #-------------------
 # Servo Enable Command
-net servo-x-enable		<=	joint.0.amp-enable-out
+#net servo-x-enable		<=	joint.0.amp-enable-out
 
 # Set PID-loop Parameters (from .ini file variables):
 setp   pid.x.Pgain     [JOINT_0]P
@@ -138,7 +138,7 @@ setp   pid.x.maxerror  [JOINT_0]MAX_ERROR
 
 # Connect Virtual Pins to X-axis PID Loop:
 net x-index-enable	=>	pid.x.index-enable
-net servo-x-enable     	=>	pid.x.enable
+#net servo-x-enable     	=>	pid.x.enable
 net x-pos-cmd        	=>	pid.x.command
 net x-vel-cmd        	=>	pid.x.command-deriv
 net x-pos-fb         	=>	pid.x.feedback
@@ -198,7 +198,7 @@ net x-homing			<=	joint.0.homing
 # AXIS-Y
 #-------------------
 # Servo Enable Command
-net servo-y-enable		<=	joint.1.amp-enable-out
+#net servo-y-enable		<=	joint.1.amp-enable-out
 
 # Set PID-loop Parameters (from .ini file variables):
 setp   pid.y.Pgain     [JOINT_1]P
@@ -276,7 +276,7 @@ net y-homing			<=	joint.1.homing
 # AXIS-Z
 #-------------------
 # Servo Enable Command
-net servo-z-enable		<=	joint.2.amp-enable-out
+#net servo-z-enable		<=	joint.2.amp-enable-out
 
 # Set PID-loop Parameters (from .ini file variables):
 setp   pid.z.Pgain     [JOINT_2]P
