@@ -8,7 +8,7 @@
 #-------------------
 
 # Overtravel release (ignore limits)
-net ignore-limits 		<= gmoccapy.ignore-limits-active
+#net ignore-limits 		<= gmoccapy.ignore-limits-active
 
 # Display tool offset after G43 (for tool-change / tool length offset)
 net tooloffset-z		gmoccapy.tooloffset-z	<= motion.tooloffset.z
