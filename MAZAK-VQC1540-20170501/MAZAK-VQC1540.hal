@@ -15,10 +15,11 @@
 # LOAD MODULES
 #-------------------
 # Trivial Kinematics module (1:1 correspondence between joints & axes)
-loadrt trivkins
+loadrt [KINS]KINEMATICS
+#autoconverted  trivkins
 
 # EMC Motion control module - servo period freq & # of joints
-loadrt [EMCMOT]EMCMOT servo_period_nsec=[EMCMOT]SERVO_PERIOD num_joints=[TRAJ]AXES num_dio=[EMCMOT]NUM_DIO num_aio=[EMCMOT]NUM_AIO
+loadrt [EMCMOT]EMCMOT servo_period_nsec=[EMCMOT]SERVO_PERIOD num_joints=[KINS]JOINTS num_dio=[EMCMOT]NUM_DIO num_aio=[EMCMOT]NUM_AIO 
 
 # Mesa Driver - generic (hostmot2)
 loadrt hostmot2
@@ -120,20 +121,20 @@ setp hm2_7i80.0.resolver.excitation-khz [AXES]RESOLVER_EXC_FREQ
 # AXIS-X
 #-------------------
 # Servo Enable Command
-net servo-x-enable		<=	axis.0.amp-enable-out
+net servo-x-enable		<=	joint.0.amp-enable-out
 
 # Set PID-loop Parameters (from .ini file variables):
-setp   pid.x.Pgain     [AXIS_0]P
-setp   pid.x.Igain     [AXIS_0]I
-setp   pid.x.Dgain     [AXIS_0]D
-setp   pid.x.bias      [AXIS_0]BIAS
-setp   pid.x.FF0       [AXIS_0]FF0
-setp   pid.x.FF1       [AXIS_0]FF1
-setp   pid.x.FF2       [AXIS_0]FF2
-setp   pid.x.deadband  [AXIS_0]DEADBAND
-setp   pid.x.maxoutput [AXIS_0]MAX_OUTPUT
+setp   pid.x.Pgain     [JOINT_0]P
+setp   pid.x.Igain     [JOINT_0]I
+setp   pid.x.Dgain     [JOINT_0]D
+setp   pid.x.bias      [JOINT_0]BIAS
+setp   pid.x.FF0       [JOINT_0]FF0
+setp   pid.x.FF1       [JOINT_0]FF1
+setp   pid.x.FF2       [JOINT_0]FF2
+setp   pid.x.deadband  [JOINT_0]DEADBAND
+setp   pid.x.maxoutput [JOINT_0]MAX_OUTPUT
 setp   pid.x.error-previous-target true
-setp   pid.x.maxerror  [AXIS_0]MAX_ERROR
+setp   pid.x.maxerror  [JOINT_0]MAX_ERROR
 
 # Connect Virtual Pins to X-axis PID Loop:
 net x-index-enable	=>	pid.x.index-enable
@@ -145,7 +146,7 @@ net x-output         	<=	pid.x.output
 
 
 # AXIS SERVO DRIVE / AMPLIFIER FAULT (from PLC)
-net plc-servo-x-drive-alarm	=>	axis.0.amp-fault-in
+net plc-servo-x-drive-alarm	=>	joint.0.amp-fault-in
 
 
 # PWM GENERATOR SETUP
@@ -153,23 +154,23 @@ net plc-servo-x-drive-alarm	=>	axis.0.amp-fault-in
 setp hm2_7i80.0.pwmgen.00.output-type			2
 
 # Set x-axis PWMGen scale - from .ini file
-setp hm2_7i80.0.pwmgen.00.scale  			[AXIS_0]OUTPUT_SCALE
+setp hm2_7i80.0.pwmgen.00.scale  			[JOINT_0]OUTPUT_SCALE
 
 # Connect Signals:
 # - Analog servo drive command signal to Mesa board analog-out
 net x-output  			=>	hm2_7i80.0.pwmgen.00.value
 # - Commanded-position from internal axis module
-net x-pos-cmd 			<=	axis.0.motor-pos-cmd
+net x-pos-cmd 			<=	joint.0.motor-pos-cmd
 
 
 # RESOLVER FEEDBACK SIGNALS/SETUP
 # Set Parameters from .ini File Variables:
 # - Index-divisor: number of cycles per rev of the resolver (used to generate an emulated index)
-setp hm2_7i80.0.resolver.00.index-divisor		[AXIS_0]RESOLVER_INDEX_DIVISOR
+setp hm2_7i80.0.resolver.00.index-divisor		[JOINT_0]RESOLVER_INDEX_DIVISOR
 # - Position scale, in machine units per resolver electrical revolution
-setp hm2_7i80.0.resolver.00.scale  				[AXIS_0]RESOLVER_SCALE
+setp hm2_7i80.0.resolver.00.scale  				[JOINT_0]RESOLVER_SCALE
 # -  Conversion factor between resolver rotation speed and machine velocity
-setp hm2_7i80.0.resolver.00.velocity-scale		[AXIS_0]RESOLVER_VELOCITY_SCALE
+setp hm2_7i80.0.resolver.00.velocity-scale		[JOINT_0]RESOLVER_VELOCITY_SCALE
 
 # Connect Signals:
 # - Position feedback from Mesa board
@@ -177,40 +178,40 @@ net x-pos-fb			<=	hm2_7i80.0.resolver.00.position
 # - Velocity feedback from Mesa board
 net x-vel-fb			<=	hm2_7i80.0.resolver.00.velocity
 # - Position feedback to internal axis module
-net x-pos-fb			=>	axis.0.motor-pos-fb
+net x-pos-fb			=>	joint.0.motor-pos-fb
 # - Index enable (reset position & count pins every time resolver passes through 0 position)
-net x-index-enable 			axis.0.index-enable  <=>  hm2_7i80.0.resolver.00.index-enable
+net x-index-enable 			joint.0.index-enable  <=>  hm2_7i80.0.resolver.00.index-enable
 # - Counts (simulated encoder count at 2^24 counts per rev = 16777216 counts, but not reset by 'index' or 'reset' pins)
 net x-pos-rawcounts		<=	hm2_7i80.0.resolver.00.rawcounts
 
 # HOME/LIMIT-SWITCH SIGNAL SETUP
 # Homing Switch:
-net x-home		    	=>	axis.0.home-sw-in
+net x-home		    	=>	joint.0.home-sw-in
 # -X Limit Switch:
-#net UNUSED			=>	axis.0.neg-lim-sw-in
+#net UNUSED			=>	joint.0.neg-lim-sw-in
 # +X Limit Switch:
-net x-home			=>	axis.0.pos-lim-sw-in
+net x-home			=>	joint.0.pos-lim-sw-in
 # Homing Signal:
-net x-homing			<=	axis.0.homing
+net x-homing			<=	joint.0.homing
 
 #-------------------
 # AXIS-Y
 #-------------------
 # Servo Enable Command
-net servo-y-enable		<=	axis.1.amp-enable-out
+net servo-y-enable		<=	joint.1.amp-enable-out
 
 # Set PID-loop Parameters (from .ini file variables):
-setp   pid.y.Pgain     [AXIS_1]P
-setp   pid.y.Igain     [AXIS_1]I
-setp   pid.y.Dgain     [AXIS_1]D
-setp   pid.y.bias      [AXIS_1]BIAS
-setp   pid.y.FF0       [AXIS_1]FF0
-setp   pid.y.FF1       [AXIS_1]FF1
-setp   pid.y.FF2       [AXIS_1]FF2
-setp   pid.y.deadband  [AXIS_1]DEADBAND
-setp   pid.y.maxoutput [AXIS_1]MAX_OUTPUT
+setp   pid.y.Pgain     [JOINT_1]P
+setp   pid.y.Igain     [JOINT_1]I
+setp   pid.y.Dgain     [JOINT_1]D
+setp   pid.y.bias      [JOINT_1]BIAS
+setp   pid.y.FF0       [JOINT_1]FF0
+setp   pid.y.FF1       [JOINT_1]FF1
+setp   pid.y.FF2       [JOINT_1]FF2
+setp   pid.y.deadband  [JOINT_1]DEADBAND
+setp   pid.y.maxoutput [JOINT_1]MAX_OUTPUT
 setp   pid.y.error-previous-target true
-setp   pid.y.maxerror  [AXIS_1]MAX_ERROR
+setp   pid.y.maxerror  [JOINT_1]MAX_ERROR
 
 # Connect Virtual Pins between Modules:
 net y-index-enable		<=>	pid.y.index-enable
@@ -222,7 +223,7 @@ net y-output         	<=	pid.y.output
 
 
 # AXIS SERVO DRIVE / AMPLIFIER FAULT (from PLC)
-net plc-servo-y-drive-alarm	=>	axis.1.amp-fault-in
+net plc-servo-y-drive-alarm	=>	joint.1.amp-fault-in
 
 
 # PWM GENERATOR SETUP
@@ -230,23 +231,23 @@ net plc-servo-y-drive-alarm	=>	axis.1.amp-fault-in
 setp 	hm2_7i80.0.pwmgen.01.output-type 2
 
 # Set y-axis PWMGen scale - from .ini file
-setp hm2_7i80.0.pwmgen.01.scale  			[AXIS_1]OUTPUT_SCALE
+setp hm2_7i80.0.pwmgen.01.scale  			[JOINT_1]OUTPUT_SCALE
 
 # Connect Signals:
 # - Analog servo drive command signal to Mesa board analog-out
 net y-output  			=>	hm2_7i80.0.pwmgen.01.value
 # - Commanded-position to internal axis module
-net y-pos-cmd 			<=	axis.1.motor-pos-cmd
+net y-pos-cmd 			<=	joint.1.motor-pos-cmd
 
 
 # RESOLVER FEEDBACK SIGNALS/SETUP
 # Set Parameters from .ini File Variables:
 # - Index-divisor: number of cycles per rev of the resolver (used to generate an emulated index)
-setp hm2_7i80.0.resolver.01.index-divisor 		[AXIS_1]RESOLVER_INDEX_DIVISOR
+setp hm2_7i80.0.resolver.01.index-divisor 		[JOINT_1]RESOLVER_INDEX_DIVISOR
 # - Position scale, in machine units per resolver electrical revolution
-setp hm2_7i80.0.resolver.01.scale  				[AXIS_1]RESOLVER_SCALE
+setp hm2_7i80.0.resolver.01.scale  				[JOINT_1]RESOLVER_SCALE
 # -  Conversion factor between resolver rotation speed and machine velocity
-setp hm2_7i80.0.resolver.01.velocity-scale 		[AXIS_1]RESOLVER_VELOCITY_SCALE
+setp hm2_7i80.0.resolver.01.velocity-scale 		[JOINT_1]RESOLVER_VELOCITY_SCALE
 
 # Connect Signals:
 # - Position feedback from Mesa board
@@ -254,41 +255,41 @@ net y-pos-fb			<=	hm2_7i80.0.resolver.01.position
 # - Velocity feedback from Mesa board
 net y-vel-fb			<=	hm2_7i80.0.resolver.01.velocity
 # - Position feedback to internal axis module
-net y-pos-fb			=>	axis.1.motor-pos-fb
+net y-pos-fb			=>	joint.1.motor-pos-fb
 # - Index enable (reset position & count pins every time resolver passes through 0 position)
-net y-index-enable axis.1.index-enable  <=>  hm2_7i80.0.resolver.01.index-enable
+net y-index-enable joint.1.index-enable  <=>  hm2_7i80.0.resolver.01.index-enable
 # - Counts (simulated encoder count at 2^24 counts per rev = 16777216 counts, but not reset by 'index' or 'reset' pins)
 net y-pos-rawcounts		<=	hm2_7i80.0.resolver.01.rawcounts
 
 # HOME/LIMIT-SWITCH SIGNAL SETUP
 # Homing Switch:
-net y-home			=>	axis.1.home-sw-in
+net y-home			=>	joint.1.home-sw-in
 # -Y Limit Switch:
-#net UNUSED			=>	axis.1.neg-lim-sw-in
+#net UNUSED			=>	joint.1.neg-lim-sw-in
 # +Y Limit Switch:
-net y-home			=>	axis.1.pos-lim-sw-in
+net y-home			=>	joint.1.pos-lim-sw-in
 # Homing Signal:
-net y-homing			<=	axis.1.homing
+net y-homing			<=	joint.1.homing
 
 
 #-------------------
 # AXIS-Z
 #-------------------
 # Servo Enable Command
-net servo-z-enable		<=	axis.2.amp-enable-out
+net servo-z-enable		<=	joint.2.amp-enable-out
 
 # Set PID-loop Parameters (from .ini file variables):
-setp   pid.z.Pgain     [AXIS_2]P
-setp   pid.z.Igain     [AXIS_2]I
-setp   pid.z.Dgain     [AXIS_2]D
-setp   pid.z.bias      [AXIS_2]BIAS
-setp   pid.z.FF0       [AXIS_2]FF0
-setp   pid.z.FF1       [AXIS_2]FF1
-setp   pid.z.FF2       [AXIS_2]FF2
-setp   pid.z.deadband  [AXIS_2]DEADBAND
-setp   pid.z.maxoutput [AXIS_2]MAX_OUTPUT
+setp   pid.z.Pgain     [JOINT_2]P
+setp   pid.z.Igain     [JOINT_2]I
+setp   pid.z.Dgain     [JOINT_2]D
+setp   pid.z.bias      [JOINT_2]BIAS
+setp   pid.z.FF0       [JOINT_2]FF0
+setp   pid.z.FF1       [JOINT_2]FF1
+setp   pid.z.FF2       [JOINT_2]FF2
+setp   pid.z.deadband  [JOINT_2]DEADBAND
+setp   pid.z.maxoutput [JOINT_2]MAX_OUTPUT
 setp   pid.z.error-previous-target true
-setp   pid.z.maxerror  [AXIS_2]MAX_ERROR
+setp   pid.z.maxerror  [JOINT_2]MAX_ERROR
 
 # Connect Virtual Pins between Modules:
 net z-index-enable		<=>	pid.z.index-enable
@@ -300,7 +301,7 @@ net z-output        	 =>	pid.z.output
 
 
 # AXIS SERVO DRIVE / AMPLIFIER FAULT (from PLC)
-net plc-servo-z-drive-alarm	=>	axis.2.amp-fault-in
+net plc-servo-z-drive-alarm	=>	joint.2.amp-fault-in
 
 
 # PWM GENERATOR SETUP
@@ -308,23 +309,23 @@ net plc-servo-z-drive-alarm	=>	axis.2.amp-fault-in
 setp 	hm2_7i80.0.pwmgen.02.output-type 2
 
 # Set z-axis PWMGen scale - from .ini file
-setp hm2_7i80.0.pwmgen.02.scale  			[AXIS_2]OUTPUT_SCALE
+setp hm2_7i80.0.pwmgen.02.scale  			[JOINT_2]OUTPUT_SCALE
 
 # Connect Signals:
 # - Analog servo drive command signal to Mesa board analog-out
 net z-output  			=>	hm2_7i80.0.pwmgen.02.value
 # - Commanded-position to internal axis module
-net z-pos-cmd 			=>	axis.2.motor-pos-cmd
+net z-pos-cmd 			=>	joint.2.motor-pos-cmd
 
 
 # RESOLVER FEEDBACK SIGNALS/SETUP
 # Set Parameters from .ini File Variables:
 # - Index-divisor: number of cycles per rev of the resolver (used to generate an emulated index)
-setp hm2_7i80.0.resolver.02.index-divisor 		[AXIS_2]RESOLVER_INDEX_DIVISOR
+setp hm2_7i80.0.resolver.02.index-divisor 		[JOINT_2]RESOLVER_INDEX_DIVISOR
 # - Position scale, in machine units per resolver electrical revolution
-setp hm2_7i80.0.resolver.02.scale  				[AXIS_2]RESOLVER_SCALE
+setp hm2_7i80.0.resolver.02.scale  				[JOINT_2]RESOLVER_SCALE
 # -  Conversion factor between resolver rotation speed and machine velocity
-setp hm2_7i80.0.resolver.02.velocity-scale 		[AXIS_2]RESOLVER_VELOCITY_SCALE
+setp hm2_7i80.0.resolver.02.velocity-scale 		[JOINT_2]RESOLVER_VELOCITY_SCALE
 
 # Connect Signals:
 # - Position feedback from Mesa board
@@ -332,21 +333,21 @@ net z-pos-fb			<=	hm2_7i80.0.resolver.02.position
 # - Velocity feedback from Mesa board
 net z-vel-fb			<=	hm2_7i80.0.resolver.02.velocity
 # - Position feedback to internal axis module
-net z-pos-fb			=>	axis.2.motor-pos-fb
+net z-pos-fb			=>	joint.2.motor-pos-fb
 # - Index enable (reset position & count pins every time resolver passes through 0 position)
-net z-index-enable axis.2.index-enable  <=>  hm2_7i80.0.resolver.02.index-enable
+net z-index-enable joint.2.index-enable  <=>  hm2_7i80.0.resolver.02.index-enable
 # - Counts (simulated encoder count at 2^24 counts per rev = 16777216 counts, but not reset by 'index' or 'reset' pins)
 net z-pos-rawcounts		<=	hm2_7i80.0.resolver.02.rawcounts
 
 # HOME/LIMIT-SWITCH SIGNAL SETUP
 # Homing Switch:
-net z-home			=>	axis.2.home-sw-in
+net z-home			=>	joint.2.home-sw-in
 # -Z Limit Switch:
-#net UNUSED			=>	axis.2.neg-lim-sw-in
+#net UNUSED			=>	joint.2.neg-lim-sw-in
 # +Z Limit Switch:
-net z-home			=>	axis.2.pos-lim-sw-in
+net z-home			=>	joint.2.pos-lim-sw-in
 # Homing Signal:
-net z-homing			<=	axis.2.homing
+net z-homing			<=	joint.2.homing
 
 #=============================
 # INTERNAL SIGNALS
@@ -356,31 +357,31 @@ net z-homing			<=	axis.2.homing
 #-------------------
 # Joints-to-Axes
 # - X-axis
-net joint-select-a		=>	halui.joint.0.select
+net joint-select-a		=>	halui.axis.x.select
 net x-is-homed			<=	halui.joint.0.is-homed
-net jog-x-pos             halui.jog.0.plus
-net jog-x-neg             halui.jog.0.minus
-net jog-x-analog          halui.jog.0.analog
+net jog-x-pos             halui.axis.x.plus
+net jog-x-neg             halui.axis.x.minus
+net jog-x-analog          halui.axis.x.analog
 
 # - Y-axis
-net joint-select-b        halui.joint.1.select
+net joint-select-b        halui.axis.y.select
 net y-is-homed            halui.joint.1.is-homed
-net jog-y-pos             halui.jog.1.plus
-net jog-y-neg             halui.jog.1.minus
-net jog-y-analog          halui.jog.1.analog
+net jog-y-pos             halui.axis.y.plus
+net jog-y-neg             halui.axis.y.minus
+net jog-y-analog          halui.axis.y.analog
 
 # - Z-axis
-net joint-select-c        halui.joint.2.select
+net joint-select-c        halui.axis.z.select
 net z-is-homed            halui.joint.2.is-homed
-net jog-z-pos             halui.jog.2.plus
-net jog-z-neg             halui.jog.2.minus
-net jog-z-analog          halui.jog.2.analog
+net jog-z-pos             halui.axis.z.plus
+net jog-z-neg             halui.axis.z.minus
+net jog-z-analog          halui.axis.z.analog
 
 # MDI/Jogging
 net MDI-mode			<=	halui.mode.is-mdi
-net jog-selected-pos		<=	halui.jog.selected.plus
-net jog-selected-neg		<=	halui.jog.selected.minus
-net jog-speed			<=	halui.jog-speed 
+net jog-selected-pos		<=	halui.axis.selected.plus
+net jog-selected-neg		<=	halui.axis.selected.minus
+net jog-speed			<=	halui.axis.jog-speed 
 
 
 #-------------------

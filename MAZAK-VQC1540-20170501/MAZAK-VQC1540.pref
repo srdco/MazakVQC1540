@@ -72,4 +72,10 @@ unhomed_color = red
 dro_digits = 4
 toggle_readout = True
 offset_axis_x = 1.5
+scale_rapid_override = 1
+blockheight = 0.0
+use_toolmeasurement = False
+icon_theme = None
+hide_tooltips = False
+reload_tool = True
 
