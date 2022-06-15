@@ -109,7 +109,7 @@ connectors between control computer and machine cabling:
 
 # Mazak VQC 15/40 hardware
 
-spindle drive: Mitsubishi Freqrol-SF
+spindle drive: Mitsubishi Freqrol FR-SE
 
 servo amps: Mitsubishi Meldas TRS50B AXO4D
 
